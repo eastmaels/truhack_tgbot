@@ -4,6 +4,7 @@
   "description": "KOII x Truflation Hackathon Telegram Bot",
   "main": "bot.js",
   "scripts": {
+    "start": "node bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,5 +23,10 @@
   "bugs": {
     "url": "https://github.com/blurtopian/truhack_tgbot/issues"
   },
-  "homepage": "https://github.com/blurtopian/truhack_tgbot#readme"
+  "homepage": "https://github.com/blurtopian/truhack_tgbot#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "mongoose": "^8.6.2",
+    "node-telegram-bot-api": "^0.66.0"
+  }
 }
