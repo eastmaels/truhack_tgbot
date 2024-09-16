@@ -37,17 +37,41 @@ const TweetSchema = new Schema({
   time_read: {
     type: Date,
   },
-  comment: Number,
-  like: Number,
-  share: Number,
-  view: Number,
-  outer_media_url: [String],
-  outer_media_short_url: [String],
-  keyword: String,
-  hash: String,
-  is_reviewed: { type: Boolean, default: false },
-  has_candidate: { type: Boolean, default: false },
-  candidates: [String],
+  comment: {
+    type: Number
+  },
+  like: {
+    type: Number
+  },
+  share: {
+    type: Number
+  },
+  view: {
+    type: Number
+  },
+  outer_media_url: {
+    type: [String]
+  },
+  outer_media_short_url: {
+    type: [String]
+  },
+  keyword: {
+    type: String
+  },
+  hash: {
+    type: String
+  },
+  is_reviewed: {
+    type: Boolean,
+    default: false
+  },
+  has_candidate: {
+    type: Boolean,
+    default: false
+  },
+  candidates: {
+    type: [String]
+  },
 });
 
 module.exports = { TweetSchema };

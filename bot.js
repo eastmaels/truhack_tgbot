@@ -9,34 +9,41 @@ const bot = new TelegramBot(token, { polling: true });
 // MongoDB connection string
 const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/test"; // Replace with your MongoDB URI
 
-// Connect to MongoDB using Mongoose
-mongoose
-  .connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("Error connecting to MongoDB", err));
+mongoose.connect(mongoURI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+  
+mongoose.connection.on('connected', () => {
+  console.log('Mongoose connected to MongoDB');
+});
+  
+mongoose.connection.on('error', (err) => {
+  console.error('Mongoose connection error:', err);
+});
+  
+mongoose.connection.on('disconnected', () => {
+  console.log('Mongoose disconnected from MongoDB');
+});
 
-// Define a schema for the tweets
-// const tweetSchema = new mongoose.Schema({
-//     content: String,
-//     reviewed: { type: Boolean, default: false },
-//     is_candidate: { type: Boolean, default: null }
-// });
-
-// Create a model for the tweets
+var mongoDb = mongoose.createConnection(
+  (process.env.MONGODB_URI || 'mongodb://localhost:27017/test')
+);
+// Create models
 const {
   SentimentSchema,
   SentimentsAggregateSchema,
   KeywordSchema,
   TweetSchema,
-} = require("./src/schemas");
-const Keyword = mongoDb.model("Keyword", KeywordSchema);
+} = require("./schemas");
+const Keyword = mongoose.model("Keyword", KeywordSchema);
 const SentimentsAggregate = mongoDb.model(
   "SentimentsAggregate",
   SentimentsAggregateSchema
 );
 const Sentiment = mongoDb.model("Sentiment", SentimentSchema);
 const Tweet = mongoDb.model("Tweet", TweetSchema);
-const models = { Sentiment, SentimentsAggregate, Keyword, Tweet };
+// const models = { Sentiment, SentimentsAggregate, Keyword, Tweet };
 
 // Function to fetch the next tweet that hasn't been reviewed
 async function getNextTweet() {

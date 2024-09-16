@@ -1,5 +1,5 @@
 {
-  "name": "truhack_tgbot",
+  "name": "truhack-tgbot",
   "version": "0.0.1",
   "description": "KOII x Truflation Hackathon Telegram Bot",
   "main": "bot.js",
@@ -26,7 +26,7 @@
   "homepage": "https://github.com/blurtopian/truhack_tgbot#readme",
   "dependencies": {
     "dotenv": "^16.4.5",
-    "mongoose": "^8.6.2",
+    "mongoose": "^7.4.0",
     "node-telegram-bot-api": "^0.66.0"
   }
 }
