@@ -1,0 +1,26 @@
+{
+  "name": "truhack_tgbot",
+  "version": "0.0.1",
+  "description": "KOII x Truflation Hackathon Telegram Bot",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blurtopian/truhack_tgbot.git"
+  },
+  "keywords": [
+    "telegram",
+    "hackathon",
+    "koii",
+    "truflation",
+    "bot"
+  ],
+  "author": "East",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/blurtopian/truhack_tgbot/issues"
+  },
+  "homepage": "https://github.com/blurtopian/truhack_tgbot#readme"
+}
