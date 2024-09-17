@@ -1,6 +1,7 @@
 require("dotenv").config();
 const TelegramBot = require("node-telegram-bot-api");
 const mongoose = require("mongoose");
+const { htmlToText } = require('html-to-text');
 
 // Replace with your bot token
 const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -51,10 +52,11 @@ async function getNextTweet() {
 }
 
 // Function to update the tweet classification
-async function updateTweetStatus(tweetId, isCandidate) {
+async function updateTweetStatus({ tweetId, hasCandidate, reviewedBy }) {
   await Tweet.findByIdAndUpdate(tweetId, {
     is_reviewed: true,
-    is_candidate: isCandidate,
+    is_candidate: hasCandidate,
+    reviewed_by: reviewedBy
   });
 }
 
@@ -74,11 +76,11 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 // Listen for any kind of message. There are different kinds of
 // messages.
 bot.on('message', (msg) => {
-    const chatId = msg.chat.id;
-  
-    // send a message to the chat acknowledging receipt of their message
-    bot.sendMessage(chatId, 'Received your message');
-  });
+  const chatId = msg.chat.id;
+
+  // send a message to the chat acknowledging receipt of their message
+  bot.sendMessage(chatId, 'Received your message');
+});
 
 // Start command
 bot.onText(/\/start/, async (msg) => {
@@ -90,49 +92,69 @@ bot.onText(/\/start/, async (msg) => {
     bot.sendMessage(chatId, "No more tweets to review.");
     return;
   }
-
-  // Display tweet content with buttons for classification
-  const options = {
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "Yes, it contains a candidate",
-            callback_data: JSON.stringify({ id: tweet._id, candidate: true }),
-          },
-          {
-            text: "No, it doesn't",
-            callback_data: JSON.stringify({ id: tweet._id, candidate: false }),
-          },
+  try {
+    // Display tweet content with buttons for classification
+    const options = {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "Yes, it contains a candidate",
+              callback_data: JSON.stringify({ id: tweet._id, has_candidate: true }),
+            },
+            {
+              text: "No, it doesn't",
+              callback_data: JSON.stringify({ id: tweet._id, has_candidate: false }),
+            },
+          ],
         ],
-      ],
-    },
-  };
+      },
+    };
 
-  bot.sendMessage(chatId, `Tweet: ${tweet.content}`, options);
+    const cleanText = htmlToText(tweet.tweets_content);
+    bot.sendMessage(chatId, removeLineBreaks(cleanText), options);
+  } catch (error) {
+    console.log("error", error);
+    next(error);
+  }
 });
+
+function stripHtml(html) {
+  return html.replace(/<\/?[^>]+(>|$)/g, "");
+}
+
+function removeLineBreaks(text) {
+  return text.replace(/(\r\n|\n|\r)/gm, " ");
+}
 
 // Handle button clicks
 bot.on("callback_query", async (callbackQuery) => {
+  console.log("callback_query", callbackQuery);
   const chatId = callbackQuery.message.chat.id;
   const data = JSON.parse(callbackQuery.data);
 
   const tweetId = data.id;
-  const isCandidate = data.candidate;
+  const hasCandidate = data.has_candidate;
+  const reviewedBy = callbackQuery.from.username;
 
   // Update the tweet status in the database
-  await updateTweetStatus(tweetId, isCandidate);
+  await updateTweetStatus({
+    tweetId,
+    hasCandidate,
+    reviewedBy,
+  });
 
   // Inform the user that the tweet has been reviewed
   bot.sendMessage(
     chatId,
     `Thanks! You classified this tweet as "${
-      isCandidate ? "Contains a candidate" : "Does not contain a candidate"
+      hasCandidate ? "Contains a candidate" : "Does not contain a candidate"
     }".`
   );
 
   // Fetch and send the next tweet
   const nextTweet = await getNextTweet();
+  console.log("nextTweet", nextTweet);
   if (nextTweet) {
     const options = {
       reply_markup: {
@@ -142,14 +164,14 @@ bot.on("callback_query", async (callbackQuery) => {
               text: "Yes, it contains a candidate",
               callback_data: JSON.stringify({
                 id: nextTweet._id,
-                candidate: true,
+                has_candidate: true,
               }),
             },
             {
               text: "No, it doesn't",
               callback_data: JSON.stringify({
                 id: nextTweet._id,
-                candidate: false,
+                has_candidate: false,
               }),
             },
           ],
@@ -157,7 +179,8 @@ bot.on("callback_query", async (callbackQuery) => {
       },
     };
 
-    bot.sendMessage(chatId, `Tweet: ${nextTweet.content}`, options);
+    const cleanText = htmlToText(nextTweet.tweets_content);
+    bot.sendMessage(chatId, removeLineBreaks(cleanText), options);
   } else {
     bot.sendMessage(chatId, "No more tweets to review.");
   }

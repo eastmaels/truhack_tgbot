@@ -5,6 +5,7 @@
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js",
+    "dev-win": ".\\node_modules\\.bin\\nodemon bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -26,7 +27,12 @@
   "homepage": "https://github.com/blurtopian/truhack_tgbot#readme",
   "dependencies": {
     "dotenv": "^16.4.5",
+    "html-to-text": "^9.0.5",
     "mongoose": "^7.4.0",
-    "node-telegram-bot-api": "^0.66.0"
+    "node-telegram-bot-api": "^0.66.0",
+    "string-strip-html": "^13.4.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
   }
 }

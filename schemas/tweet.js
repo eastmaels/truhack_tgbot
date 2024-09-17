@@ -2,11 +2,6 @@ const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const TweetSchema = new Schema({
-  value: {
-    type: String,
-    trim: true,
-    required: true,
-  },
   user_name: {
     type: String,
     trim: true,
@@ -27,6 +22,7 @@ const TweetSchema = new Schema({
   tweets_id: {
     type: String,
     trim: true,
+    unique: true,
   },
   tweets_content: {
     type: String,
@@ -59,18 +55,27 @@ const TweetSchema = new Schema({
     type: String
   },
   hash: {
+    type: String,
+  },
+  // for manual or supervised learning
+  campaign: {
     type: String
+  },
+  tags: {
+    type: [String]
+  },
+  has_candidate: {
+    type: Boolean
+  },
+  candidates: {
+    type: [String]
   },
   is_reviewed: {
     type: Boolean,
     default: false
   },
-  has_candidate: {
-    type: Boolean,
-    default: false
-  },
-  candidates: {
-    type: [String]
+  reviewed_by: {
+    type: String
   },
 });
 
