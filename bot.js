@@ -86,37 +86,53 @@ bot.on('message', (msg) => {
 bot.onText(/\/start/, async (msg) => {
   const chatId = msg.chat.id;
 
-  // Fetch the next unreviewed tweet
-  const tweet = await getNextTweet();
-  if (!tweet) {
-    bot.sendMessage(chatId, "No more tweets to review.");
-    return;
-  }
-  try {
-    // Display tweet content with buttons for classification
-    const options = {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "Yes, it contains a candidate",
-              callback_data: JSON.stringify({ id: tweet._id, has_candidate: true }),
-            },
-            {
-              text: "No, it doesn't",
-              callback_data: JSON.stringify({ id: tweet._id, has_candidate: false }),
-            },
-          ],
-        ],
-      },
-    };
+  // Send a message with a Web App button
+  bot.sendMessage(chatId, "KOII x Truflation Hackathon App", {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          {
+            text: 'Launch App',
+            web_app: {
+              url: 'https://blurtopian.github.io/truhack_tgapp'  // Replace with your Mini App URL
+            }
+          }
+        ]
+      ]
+    }
+  });
 
-    const cleanText = htmlToText(tweet.tweets_content);
-    bot.sendMessage(chatId, removeLineBreaks(cleanText), options);
-  } catch (error) {
-    console.log("error", error);
-    next(error);
-  }
+  // // Fetch the next unreviewed tweet
+  // const tweet = await getNextTweet();
+  // if (!tweet) {
+  //   bot.sendMessage(chatId, "No more tweets to review.");
+  //   return;
+  // }
+  // try {
+  //   // Display tweet content with buttons for classification
+  //   const options = {
+  //     reply_markup: {
+  //       inline_keyboard: [
+  //         [
+  //           {
+  //             text: "Yes, it contains a candidate",
+  //             callback_data: JSON.stringify({ id: tweet._id, has_candidate: true }),
+  //           },
+  //           {
+  //             text: "No, it doesn't",
+  //             callback_data: JSON.stringify({ id: tweet._id, has_candidate: false }),
+  //           },
+  //         ],
+  //       ],
+  //     },
+  //   };
+
+  //   const cleanText = htmlToText(tweet.tweets_content);
+  //   bot.sendMessage(chatId, removeLineBreaks(cleanText), options);
+  // } catch (error) {
+  //   console.log("error", error);
+  //   next(error);
+  // }
 });
 
 function stripHtml(html) {
