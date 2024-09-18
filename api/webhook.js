@@ -6,6 +6,7 @@ const bot = new TelegramBot(token);
 
 // Export the webhook handler
 export default async function handler(req, res) {
+  console.log('Webhook called');
   // Handle incoming webhook POST requests
   if (req.method === 'POST') {
     bot.processUpdate(req.body); // Process the Telegram update
@@ -17,6 +18,7 @@ export default async function handler(req, res) {
 
 // Start command
 bot.onText(/\/start/, async (msg) => {
+  console.log('start called');
   const chatId = msg.chat.id;
 
   // Send a message with a Web App button
