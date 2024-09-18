@@ -9,6 +9,7 @@ export default async function handler(req, res) {
   console.log('Webhook called');
   // Handle incoming webhook POST requests
   if (req.method === 'POST') {
+    console.log('Webhook called... POST');
     bot.processUpdate(req.body); // Process the Telegram update
     res.status(200).send('OK');
   } else {
